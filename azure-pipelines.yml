@@ -1,0 +1,10 @@
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+  - task: CopyFilesOverSSH@0
+    inputs:
+      sshEndpoint: 'pleyce.app'
+      contents: '**'
+      targetFolder: '/Workspace/Monitoring'
+      readyTimeout: '20000'
