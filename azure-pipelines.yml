@@ -15,7 +15,7 @@ steps:
       inline: |
         cd /Workspace/nginx
         echo replace variables
-        awk -i inplace -v cuv1="__DOMAIN__" -v cuv2="$(__DOMAIN__)" '{gsub(cuv1,cuv2); print;}' "grafana/custom.ini"
+        awk -i inplace -v cuv1="__DOMAIN__" -v cuv2="$(DOMAIN)" '{gsub(cuv1,cuv2); print;}' "grafana/custom.ini"
         sudo docker-compose pull && docker-compose stop && docker-compose up -d --remove-orphans
       failOnStdErr: false
       readyTimeout: '20000'
