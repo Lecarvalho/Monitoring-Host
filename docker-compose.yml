@@ -13,8 +13,6 @@ services:
             - ./grafana/custom.ini:/etc/grafana/grafana.ini
             - ./data/grafana:/var/lib/grafana
             - ./data/certbot/conf:/etc/letsencrypt
-        networks:
-            - nginx-service
     telegraf:
         image: telegraf:1.17-alpine
         restart: always
@@ -42,3 +40,6 @@ services:
             INFLUXDB_DATA_INDEX_VERSION: "tsi1"
         volumes:
             - ./data/influxdb:/var/lib/influxdb
+networks:
+    external:
+        name: nginx-service
