@@ -1,43 +1,44 @@
 version: '3.9'
 
 services:
-  grafana:
-    image: grafana/grafana:8.1.2
-    restart: always
-    environment:
-        GF_SECURITY_ADMIN_USER: admin
-        GG_SECURITY_ADMIN_PASSWORD: admin
-    volumes:
-        - ./grafana/custom.ini:/etc/grafana/grafana.ini
-        - ./data/grafana:/var/lib/grafana
-        - ./data/certbot/conf/live/monitoring.pleyce.app:/etc/grafana/cert
-  telegraf:
-    image: telegraf:1.17-alpine
-    restart: always
-    volumes:
-        - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf
-        - ${VOLUME_BASE_PATH}/telegraf/etc:/etc/telegraf
-        - /var/run/docker.sock:/var/run/docker.sock
-        - /:/host:ro
-    environment:
-        - HOST_PROC=/host/proc
-        - HOST_MOUNT=/host
-    tty: true
-    privileged: true
-  influxdb:
-    image: influxdb:1.8-alpine
-    restart: always
-    environment:
-        INFLUXDB_DB: "Infra"
-        INFLUXDB_USER: telegraf
-        INFLUXDB_ADMIN_ENABLED: "true"
+    grafana:
+        image: grafana/grafana:8.1.2
+        ports:
+            - 3000:3000
+        restart: always
+        environment:
+            GF_SECURITY_ADMIN_USER: admin
+            GG_SECURITY_ADMIN_PASSWORD: admin
+        volumes:
+            - ./grafana/custom.ini:/etc/grafana/grafana.ini
+            - ./data/grafana:/var/lib/grafana
+            - ./data/certbot/conf:/etc/letsencrypt
+        networks:
+            - nginx-service
+    telegraf:
+        image: telegraf:1.17-alpine
+        restart: always
+        volumes:
+            - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf
+            - ${VOLUME_BASE_PATH}/telegraf/etc:/etc/telegraf
+            - /var/run/docker.sock:/var/run/docker.sock
+            - /:/host:ro
+        environment:
+            - HOST_PROC=/host/proc
+            - HOST_MOUNT=/host
+        tty: true
+        privileged: true
+    influxdb:
+        image: influxdb:1.8-alpine
+        restart: always
+        environment:
+            INFLUXDB_DB: "Infra"
+            INFLUXDB_USER: telegraf
+            INFLUXDB_ADMIN_ENABLED: "true"
 
-        INFLUXDB_ADMIN_USER: "admin"
-        INFLUXDB_ADMIN_PASSWORD: "admin"
+            INFLUXDB_ADMIN_USER: "admin"
+            INFLUXDB_ADMIN_PASSWORD: "admin"
 
-        INFLUXDB_DATA_INDEX_VERSION: "tsi1"
-    volumes:
-        - ./data/influxdb:/var/lib/influxdb
-
-networks:
-    monitoring-infra-network:
+            INFLUXDB_DATA_INDEX_VERSION: "tsi1"
+        volumes:
+            - ./data/influxdb:/var/lib/influxdb
