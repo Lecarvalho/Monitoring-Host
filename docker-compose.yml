@@ -41,5 +41,6 @@ services:
         volumes:
             - ./data/influxdb:/var/lib/influxdb
 networks:
-    external:
-        name: nginx-service
+    default:
+      external: true
+      name: nginx-service
