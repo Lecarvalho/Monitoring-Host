@@ -7,7 +7,10 @@ steps:
   - task: CopyFilesOverSSH@0
     inputs:
       sshEndpoint: $(sshEndpoint)
-      contents: '**'
+      contents: |
+        grafana/* 
+        telegraf/* 
+        docker-compose.yml
       targetFolder: '/Workspace/Monitoring'
       readyTimeout: '20000'
   - task: SSH@0
