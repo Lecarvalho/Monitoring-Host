@@ -3,22 +3,18 @@ version: '3.9'
 services:
     grafana:
         image: grafana/grafana:8.1.2
+        restart: always
+        user: ":"
         ports:
             - 3000:3000
-        restart: always
-        environment:
-            GF_SECURITY_ADMIN_USER: admin
-            GG_SECURITY_ADMIN_PASSWORD: admin
         volumes:
             - ./grafana/custom.ini:/etc/grafana/grafana.ini
             - ./data/grafana:/var/lib/grafana
-            - ./data/certbot/conf:/etc/letsencrypt
     telegraf:
         image: telegraf:1.17-alpine
         restart: always
         volumes:
             - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf
-            - ${VOLUME_BASE_PATH}/telegraf/etc:/etc/telegraf
             - /var/run/docker.sock:/var/run/docker.sock
             - /:/host:ro
         environment:
@@ -30,7 +26,7 @@ services:
         image: influxdb:1.8-alpine
         restart: always
         environment:
-            INFLUXDB_DB: "Infra"
+            INFLUXDB_DB: "Host"
             INFLUXDB_USER: telegraf
             INFLUXDB_ADMIN_ENABLED: "true"
 
@@ -40,6 +36,7 @@ services:
             INFLUXDB_DATA_INDEX_VERSION: "tsi1"
         volumes:
             - ./data/influxdb:/var/lib/influxdb
+
 networks:
     default:
       external: true
