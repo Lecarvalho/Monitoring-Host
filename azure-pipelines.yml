@@ -19,6 +19,8 @@ steps:
         echo replace variables
         awk -i inplace -v cuv1="__DOMAIN__" -v cuv2="$(DOMAIN)" '{gsub(cuv1,cuv2); print;}' "grafana/custom.ini"
         sudo docker-compose stop && docker-compose up -d --remove-orphans
-        if docker ps | grep -Fq proxy_nginx_1; then docker exec -it proxy_nginx_1 nginx -s reload; fi
+        if docker ps | grep -Fq proxy_nginx_1; then 
+          docker exec proxy_nginx_1 nginx -s reload; 
+        fi
       failOnStdErr: false
       readyTimeout: '20000'
